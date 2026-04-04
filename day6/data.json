@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Condoms",
+    "price": 99,
+    "quantity": 200,
+    "id": "269ddaee-f527-40f5-88b9-d42b30753cd9"
+  },
+  {
+    "name": "Sunglasses",
+    "price": 199,
+    "quantity": 2,
+    "id": "33e7d93c-881d-4246-ba3b-5c9644ec9642"
+  },
+  {
+    "name": "TV",
+    "price": 30000,
+    "quantity": 4,
+    "id": "db5ee2e1-4598-4fb4-8cbf-7eddf0a107ab"
+  }
+]
