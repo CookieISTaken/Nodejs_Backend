@@ -2,6 +2,8 @@ const express = require("express");
 const { myReadFile, mySaveFile } = require("./utils/file_helpers");
 const { v4: uuidv4 } = require("uuid");
 const app = express();
+const FILE_PATH = "./products.json";
+const ORDERS_FILE_PATH = "./orders.json";
 
 // to read body
 app.use(express.json());
@@ -13,7 +15,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/v1/products", async (req, res) => {
-  const data = await myReadFile("./data.json");
+  const data = await myReadFile(FILE_PATH);
   res.json({
     isSuccess: "YES",
     message: "Working {GET}",
@@ -25,7 +27,7 @@ app.post("/api/v1/products", async (req, res) => {
   const data = req.body;
   console.log(data);
   data.id = uuidv4();
-  const oldArr = await myReadFile("./data.json");
+  const oldArr = await myReadFile(FILE_PATH);
   console.log(oldArr);
   console.log("data type : ", typeof oldArr);
   // MANUAL Logic for new id
@@ -43,7 +45,7 @@ app.post("/api/v1/products", async (req, res) => {
   // }
   oldArr.push(data);
   console.log(oldArr);
-  await mySaveFile("./data.json", oldArr);
+  await mySaveFile(FILE_PATH, oldArr);
   res.status(201);
   res.json({
     message: "Product added to DB!",
@@ -54,7 +56,7 @@ app.patch("/api/v1/products/:productId", async (req, res) => {
   const { productId } = req.params;
   const data = req.body;
 
-  const products = await myReadFile("./data.json");
+  const products = await myReadFile(FILE_PATH);
   const idx = products.findIndex((elem) => {
     return elem.id === productId;
   });
@@ -71,7 +73,7 @@ app.patch("/api/v1/products/:productId", async (req, res) => {
   // basically whatever is new in data will be replaced
   // in the oldObj
   products[idx] = { ...odlObj, ...data };
-  await mySaveFile("./data.json", products);
+  await mySaveFile(FILE_PATH, products);
   res.status(204);
   res.json({
     isSuccess: true,
@@ -84,12 +86,12 @@ app.patch("/api/v1/products/:productId", async (req, res) => {
 //
 app.delete("/api/v1/products/:productId", async (req, res) => {
   const { productId } = req.params;
-  const products = await myReadFile("./data.json");
+  const products = await myReadFile(FILE_PATH);
   // const newproducts = [];
   // products.forEach((element) => {
   //   if (element.id != productId) newproducts.push(element);
   // });
-  // await mySaveFile("./data.json", newproducts);
+  // await mySaveFile(FILE_PATH, newproducts);
   // res.status(200);
   // res.json({
   //   isSuccess: true,
@@ -113,7 +115,7 @@ app.delete("/api/v1/products/:productId", async (req, res) => {
     return;
   }
   products.splice(idx, 1);
-  await mySaveFile("./data.json", products);
+  await mySaveFile(FILE_PATH, products);
   res.status(200);
   res.json({
     isSuccess: true,
@@ -123,6 +125,50 @@ app.delete("/api/v1/products/:productId", async (req, res) => {
         products,
       },
     },
+  });
+});
+
+// buy items
+app.post("/api/v1/orders", async (req, res) => {
+  const data = req.body;
+  const { productId } = data;
+  const products = await myReadFile(FILE_PATH);
+
+  const idx = products.findIndex((element) => {
+    return element.id === productId;
+  });
+
+  if (idx === -1) {
+    res.status(400);
+    res.json({
+      isSuccess: false,
+      message: "Invalid Product id",
+    });
+    return;
+  }
+  let productquantity = products[idx].quantity;
+  if (productquantity <= 0) {
+    res.status(500);
+    res.json({
+      isSuccess: false,
+      message: "Product out of stock!",
+    });
+    return;
+  }
+  products[idx] = { ...products[idx], quantity: productquantity - 1 };
+  await mySaveFile(FILE_PATH, products);
+
+  const orders = await myReadFile(ORDERS_FILE_PATH);
+  orders.push({
+    id: uuidv4(),
+    productId: productId,
+  });
+  await mySaveFile(ORDERS_FILE_PATH, orders);
+
+  res.status(201);
+  res.json({
+    isSuccess: true,
+    message: "Order created!",
   });
 });
 app.listen(3000, () => {

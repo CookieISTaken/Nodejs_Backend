@@ -1,0 +1,20 @@
+[
+  {
+    "name": "TV",
+    "price": 30000,
+    "quantity": 0,
+    "id": "84ab982d-e6f1-4b9a-a2fe-1a1fd5be6161"
+  },
+  {
+    "name": "Iphone",
+    "price": 199000,
+    "quantity": 100,
+    "id": "e67d0bdb-8bcf-4e27-96e0-e56759d9d361"
+  },
+  {
+    "name": "Macbook Air",
+    "price": 129000,
+    "quantity": 10,
+    "id": "c835399f-e368-49c7-ae1f-54bba29a32a3"
+  }
+]
