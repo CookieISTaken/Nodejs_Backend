@@ -50,10 +50,6 @@ app.post("/api/v1/products", async (req, res) => {
   });
 });
 
-// app.patch("/api/v1/products:prodId", async (req, res) => {
-//   const { prodId } = req.params;
-// });
-
 app.listen(3000, () => {
   console.log("App is listning at port 3000");
 });

@@ -1,4 +1,3 @@
-const { chownSync } = require("fs");
 const fsPromises = require("fs/promises");
 const myReadFile = async (filePath) => {
   try {
